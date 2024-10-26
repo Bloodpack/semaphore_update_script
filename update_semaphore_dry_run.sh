@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set a flag for dry run and verbosity
-DRY_RUN=false  # Change to true for a dry run
+DRY_RUN=true  # Change to true for a dry run
 VERBOSE=true   # Change to false to disable verbose output
 
 # Function to execute or echo commands based on the dry run flag
