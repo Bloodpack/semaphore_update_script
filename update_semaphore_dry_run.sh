@@ -42,8 +42,11 @@ CURRENT_VERSION=$(dpkg -s semaphore | grep 'Version:' | awk '{print $2}')
 verbose_echo "Current version is: $CURRENT_VERSION"
 verbose_echo "Latest release is: $RELEASE"
 
+# Strip 'v' from latest release for comparison
+LATEST_VERSION=${RELEASE#v}
+
 # Check if a new version is available
-if [ "$CURRENT_VERSION" == "$RELEASE" ]; then
+if [ "$CURRENT_VERSION" == "$LATEST_VERSION" ]; then
     echo "You are already running the latest version. Aborting update."
     exit 0
 else
