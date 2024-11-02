@@ -84,6 +84,13 @@ run_command "systemctl stop semaphore"
 verbose_echo "${YELLOW}Downloading $DOWNLOAD_URL...${RESET}"
 run_command "curl -LO \"$DOWNLOAD_URL\""
 
+# Download the latest amd64.deb package
+verbose_echo "${YELLOW}Downloading $DOWNLOAD_URL...${RESET}"
+run_command "curl -LO \"$DOWNLOAD_URL\""
+
+# Print the downloaded file name
+echo -e "${GREEN}Downloaded file: semaphore_${RELEASE}_linux_amd64.deb${RESET}"
+
 # Install the downloaded package
 verbose_echo "${YELLOW}Installing the package...${RESET}"
 run_command "dpkg -i \"semaphore_${RELEASE}_linux_amd64.deb\""
