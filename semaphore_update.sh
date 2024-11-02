@@ -7,7 +7,7 @@
 # Follow or contribute on GitHub here:
 # https://github.com/Bloodpack/semaphore_update_script
 ################################
-# VERSION: 1.0 from 26.10.2024 #
+# VERSION: 1.6 from 02.11.2024 #
 ################################
 
 # Set a flag for verbosity
@@ -84,9 +84,12 @@ run_command "systemctl stop semaphore"
 verbose_echo "${YELLOW}Downloading $DOWNLOAD_URL...${RESET}"
 run_command "curl -LO \"$DOWNLOAD_URL\""
 
+# Extract the filename from the DOWNLOAD_URL
+PACKAGE_NAME=$(basename "$DOWNLOAD_URL")
+
 # Install the downloaded package
 verbose_echo "${YELLOW}Installing the package...${RESET}"
-run_command "dpkg -i \"semaphore_${RELEASE}_linux_amd64.deb\""
+run_command "dpkg -i \"$PACKAGE_NAME\""
 
 # Start the Semaphore service
 verbose_echo "${YELLOW}Starting Semaphore service...${RESET}"
