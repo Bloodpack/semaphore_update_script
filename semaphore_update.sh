@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# bash script to update SemaphoreUI Packageinstallation on Ubuntu Server.
+# bash script to update SemaphoreUI Package installation on Ubuntu Server.
 # Copyright (c) 2023 Bloodpack
 # Author: Bloodpack 
 # License: GPL-3.0 license
@@ -37,6 +37,9 @@ verbose_echo() {
 
 # Start script
 echo -e "${GREEN}=== Updating Semaphore ===${RESET}"
+
+# Change to /opt directory
+cd /opt || { echo -e "${RED}Failed to change directory to /opt.${RESET}"; exit 1; }
 
 # Fetch the latest releases from the specified GitHub repository
 verbose_echo "${YELLOW}Fetching latest releases...${RESET}"
