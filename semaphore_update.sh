@@ -7,7 +7,7 @@
 # Follow or contribute on GitHub here:
 # https://github.com/Bloodpack/semaphore_update_script
 ################################
-# VERSION: 1.6 from 02.11.2024 #
+# VERSION: 1.0 from 26.10.2024 #
 ################################
 
 # Set a flag for verbosity
@@ -90,6 +90,15 @@ PACKAGE_NAME=$(basename "$DOWNLOAD_URL")
 # Install the downloaded package
 verbose_echo "${YELLOW}Installing the package...${RESET}"
 run_command "dpkg -i \"$PACKAGE_NAME\""
+
+# Check if the installation was successful
+if [ $? -eq 0 ]; then
+    # Delete the downloaded .deb file
+    verbose_echo "${YELLOW}Cleaning up... Removing $PACKAGE_NAME${RESET}"
+    run_command "rm \"$PACKAGE_NAME\""
+else
+    echo -e "${RED}Installation failed. Keeping the downloaded package for review.${RESET}"
+fi
 
 # Start the Semaphore service
 verbose_echo "${YELLOW}Starting Semaphore service...${RESET}"
