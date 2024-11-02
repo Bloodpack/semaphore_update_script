@@ -55,34 +55,38 @@ if [ -z "$RELEASE" ] || [ -z "$DOWNLOAD_URL" ]; then
     exit 1
 fi
 
-# Print the download URL
-verbose_echo "${GREEN}Download URL is: $DOWNLOAD_URL${RESET}"
+# Get the currently running version and strip any 'v' prefix
+CURRENT_VERSION=$(dpkg -s semaphore | grep 'Version:' | awk '{print $2}')
+CURRENT_VERSION=${CURRENT_VERSION#v}  # Strip 'v' if it exists
+verbose_echo "${GREEN}Current version is: $CURRENT_VERSION${RESET}"
+verbose_echo "${GREEN}Latest release is: $RELEASE${RESET}"
+
+# Strip 'v' from the latest release for comparison
+LATEST_VERSION=${RELEASE#v}  # Ensure the latest version is without 'v'
+
+# Check if a new version is available
+if [ "$CURRENT_VERSION" == "$LATEST_VERSION" ]; then
+    echo -e "${YELLOW}You are already running the latest version. Aborting update.${RESET}"
+    exit 0
+else
+    read -p "$(echo -e "${YELLOW}A new version is available. Do you want to proceed with the update? (y/n): ${RESET}")" confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo -e "${YELLOW}Update aborted by user.${RESET}"
+        exit 0
+    fi
+fi
+
+# Stop the Semaphore service
+verbose_echo "${YELLOW}Stopping Semaphore service...${RESET}"
+run_command "systemctl stop semaphore"
 
 # Download the latest amd64.deb package
 verbose_echo "${YELLOW}Downloading $DOWNLOAD_URL...${RESET}"
 run_command "curl -LO \"$DOWNLOAD_URL\""
 
-# Check if the download was successful
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Failed to download the package.${RESET}"
-    exit 1
-fi
-
-# Define the downloaded file name
-DOWNLOADED_FILE="semaphore_${RELEASE}_linux_amd64.deb"
-
-# Print the downloaded file name
-echo -e "${GREEN}Downloaded file: $DOWNLOADED_FILE${RESET}"
-
-# Ensure the file exists before installation
-if [ ! -f "$DOWNLOADED_FILE" ]; then
-    echo -e "${RED}Downloaded file does not exist: $DOWNLOADED_FILE${RESET}"
-    exit 1
-fi
-
 # Install the downloaded package
 verbose_echo "${YELLOW}Installing the package...${RESET}"
-run_command "dpkg -i \"$DOWNLOADED_FILE\""
+run_command "dpkg -i \"semaphore_${RELEASE}_linux_amd64.deb\""
 
 # Start the Semaphore service
 verbose_echo "${YELLOW}Starting Semaphore service...${RESET}"
